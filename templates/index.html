@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>House Price Predictor | توقع سعر المنزل</title>
+    <meta name="description" content="تطبيق ذكي للتنبؤ بأسعار المنازل باستخدام الذكاء الاصطناعي" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+</head>
+<body>
+
+    <!-- خلفية متحركة -->
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
+
+    <div class="app-wrapper">
+
+        <!-- الهيدر -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">🏠</span>
+                <div class="logo-text">
+                    <h1>House Price <span>AI</span></h1>
+                    <p>نظام ذكي للتنبؤ بأسعار العقارات</p>
+                </div>
+            </div>
+            <div class="header-badge">
+                <span class="badge-dot"></span>
+                Powered by Machine Learning
+            </div>
+        </header>
+
+        <main class="main-content">
+
+            <!-- بطاقة النموذج -->
+            <section class="glass-card form-card">
+                <div class="card-header">
+                    <h2>أدخل بيانات العقار</h2>
+                    <p>املأ الحقول التالية للحصول على تقدير دقيق للسعر</p>
+                </div>
+
+                <form id="predict-form" class="predict-form" novalidate>
+
+                    <div class="form-grid">
+
+                        <div class="field-group">
+                            <label for="Area">
+                                <span class="field-icon">📐</span> المساحة (قدم مربع)
+                            </label>
+                            <input type="number" id="Area" name="Area" placeholder="مثال: 2500" min="1" step="0.01" required />
+                            <span class="error-msg" data-for="Area"></span>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="Bedrooms">
+                                <span class="field-icon">🛏️</span> عدد غرف النوم
+                            </label>
+                            <input type="number" id="Bedrooms" name="Bedrooms" placeholder="مثال: 3" min="0" step="1" required />
+                            <span class="error-msg" data-for="Bedrooms"></span>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="Bathrooms">
+                                <span class="field-icon">🛁</span> عدد الحمامات
+                            </label>
+                            <input type="number" id="Bathrooms" name="Bathrooms" placeholder="مثال: 2" min="0" step="1" required />
+                            <span class="error-msg" data-for="Bathrooms"></span>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="Floors">
+                                <span class="field-icon">🏢</span> عدد الطوابق
+                            </label>
+                            <input type="number" id="Floors" name="Floors" placeholder="مثال: 1" min="0" step="1" required />
+                            <span class="error-msg" data-for="Floors"></span>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="YearBuilt">
+                                <span class="field-icon">📅</span> سنة البناء
+                            </label>
+                            <input type="number" id="YearBuilt" name="YearBuilt" placeholder="مثال: 2015" min="1800" max="2100" step="1" required />
+                            <span class="error-msg" data-for="YearBuilt"></span>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="Location">
+                                <span class="field-icon">📍</span> الموقع
+                            </label>
+                            <select id="Location" name="Location" required>
+                                <option value="" disabled selected>اختر الموقع</option>
+                                {% for opt in options.get('Location', []) %}
+                                <option value="{{ opt }}">{{ opt }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="error-msg" data-for="Location"></span>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="Condition">
+                                <span class="field-icon">✨</span> حالة العقار
+                            </label>
+                            <select id="Condition" name="Condition" required>
+                                <option value="" disabled selected>اختر الحالة</option>
+                                {% for opt in options.get('Condition', []) %}
+                                <option value="{{ opt }}">{{ opt }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="error-msg" data-for="Condition"></span>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="Garage">
+                                <span class="field-icon">🚗</span> يوجد جراج؟
+                            </label>
+                            <select id="Garage" name="Garage" required>
+                                <option value="" disabled selected>اختر</option>
+                                {% for opt in options.get('Garage', []) %}
+                                <option value="{{ opt }}">{{ opt }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="error-msg" data-for="Garage"></span>
+                        </div>
+
+                    </div>
+
+                    <button type="submit" class="predict-btn" id="predict-btn">
+                        <span class="btn-text">توقع السعر الآن</span>
+                        <span class="btn-icon">→</span>
+                        <span class="btn-loader"></span>
+                    </button>
+
+                </form>
+            </section>
+
+            <!-- بطاقة النتيجة -->
+            <section class="glass-card result-card" id="result-card">
+                <div class="result-placeholder" id="result-placeholder">
+                    <div class="placeholder-icon">💰</div>
+                    <h3>نتيجة التوقع ستظهر هنا</h3>
+                    <p>أدخل بيانات العقار واضغط على زر التوقع</p>
+                </div>
+
+                <div class="result-content" id="result-content" style="display:none;">
+                    <div class="result-icon-wrap">
+                        <div class="result-icon">🏡</div>
+                    </div>
+                    <p class="result-label">السعر المتوقع للعقار</p>
+                    <h2 class="result-price" id="result-price">$0</h2>
+                    <div class="result-divider"></div>
+                    <div class="result-summary" id="result-summary"></div>
+                    <button class="reset-btn" id="reset-btn">توقع عقار آخر</button>
+                </div>
+
+                <div class="result-error" id="result-error" style="display:none;">
+                    <div class="error-icon">⚠️</div>
+                    <h3>حدث خطأ</h3>
+                    <ul id="error-list"></ul>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="app-footer">
+            <p>© 2026 House Price AI — مبني باستخدام Flask & Scikit-learn</p>
+        </footer>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
